@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     'scheduling',
     'care',
     'billing',
+    'audit',
+
 ]
 
 MIDDLEWARE = [
