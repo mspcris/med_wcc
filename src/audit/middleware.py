@@ -3,21 +3,17 @@ import threading
 
 _thread_locals = threading.local()
 
-
 def set_current_request(request):
     _thread_locals.request = request
-
 
 def get_current_request():
     return getattr(_thread_locals, "request", None)
 
-
-def set_current_user(user):
-    _thread_locals.user = user
-
-
 def get_current_user():
-    return getattr(_thread_locals, "user", None)
+    req = get_current_request()
+    user = getattr(req, "user", None)
+    return user if getattr(user, "is_authenticated", False) else None
+
 
 
 def get_client_ip(request):
@@ -29,8 +25,8 @@ def get_client_ip(request):
 
 class AuditRequestMiddleware:
     """
-    Armazena o request e o usuário atual em thread local.
-    Permite que signals/services consigam pegar:
+    Guarda o request atual em thread local.
+    Signals/services conseguem capturar:
     - usuário logado
     - ip
     - user_agent
@@ -41,12 +37,10 @@ class AuditRequestMiddleware:
 
     def __call__(self, request):
         set_current_request(request)
+        try:
+            return self.get_response(request)
+        finally:
+            # evita “vazar” request entre requests no mesmo worker/thread
+            set_current_request(None)
 
-        user = getattr(request, "user", None)
-        if user is not None and getattr(user, "is_authenticated", False):
-            set_current_user(user)
-        else:
-            set_current_user(None)
-
-        return self.get_response(request)
 # END src/audit/middleware.py

@@ -1,12 +1,8 @@
+# src/audit/services.py
 from django.utils import timezone
 
-from .models import AuditLog
-from .middleware import get_current_request, get_client_ip
-
-from typing import Optional
-from django.contrib.auth import get_user_model
 from .middleware import get_current_request, get_client_ip, get_current_user
-
+from .models import AuditLog
 
 
 def log_event(
@@ -23,16 +19,16 @@ def log_event(
 
     ip_address = None
     user_agent = ""
-    req_user = None
 
     if request is not None:
         ip_address = get_client_ip(request)
         user_agent = request.META.get("HTTP_USER_AGENT", "")[:1000]
-        req_user = getattr(request, "user", None)
 
+    # prioridade:
+    # 1) performed_by explícito (quando você passar manualmente)
+    # 2) user do request (resolvido via middleware)
     if performed_by is None:
         performed_by = get_current_user()
-
 
     AuditLog.objects.create(
         action=action,
@@ -42,15 +38,8 @@ def log_event(
         before=before,
         after=after,
         performed_by=performed_by,
-        performed_at=timezone.now(),
+        performed_at=timezone.now(),  # ok manter explícito
         ip_address=ip_address,
         user_agent=user_agent,
     )
-
-_user_local = {"user": None}
-
-def set_current_user(user):
-    _user_local["user"] = user
-
-def get_current_user() -> Optional[object]:
-    return _user_local.get("user")
+# Fim do arquivo src/audit/services.py

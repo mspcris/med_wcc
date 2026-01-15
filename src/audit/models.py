@@ -1,6 +1,6 @@
+# src/audit/models.py
 from django.conf import settings
 from django.db import models
-
 
 class AuditLog(models.Model):
     """
@@ -45,3 +45,4 @@ class AuditLog(models.Model):
     def __str__(self):
         return f"{self.performed_at} {self.action} {self.entity}:{self.entity_id}"
 
+# END src/audit/models.py
