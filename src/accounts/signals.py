@@ -7,6 +7,7 @@ from django.utils import timezone
 
 from audit.services import log_event
 from .models import User
+from django.db.models.signals import pre_delete
 
 
 def _entity(user: User) -> str:
@@ -202,5 +203,14 @@ def user_post_save(sender, instance: User, created: bool, **kwargs):
             after={"is_deleted": instance.is_deleted},
             performed_by=None,
         )
+
+@receiver(pre_delete, sender=User)
+def user_pre_delete(sender, instance: User, **kwargs):
+    """
+    Bloqueia delete físico do User em QUALQUER caminho, inclusive QuerySet.delete().
+    """
+    raise RuntimeError(
+        "Delete físico de User é proibido. Use desativação (is_active=False) ou soft_delete()."
+    )
 
 # END src/accounts/signals.py
