@@ -92,8 +92,8 @@ class User(AbstractUser):
         }
 
     def delete(self, using=None, keep_parents=False):
-        raise RuntimeError("User não pode ser apagado. Use is_active=False (desativar).")
-    from django.utils import timezone
+        # Bloqueia obj.delete()
+        raise RuntimeError("User não pode ser apagado. Use desativação (is_active=False) ou soft_delete().")
 
     def soft_delete(self, performed_by=None):
         """
