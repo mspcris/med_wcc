@@ -3,6 +3,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.conf import settings
+from django.utils import timezone
 
 
 class User(AbstractUser):
@@ -92,5 +93,23 @@ class User(AbstractUser):
 
     def delete(self, using=None, keep_parents=False):
         raise RuntimeError("User não pode ser apagado. Use is_active=False (desativar).")
+    from django.utils import timezone
+
+    def soft_delete(self, performed_by=None):
+        """
+        Delete lógico (nunca físico).
+        """
+        if self.is_deleted:
+            return
+
+        self.is_deleted = True
+        self.is_active = False
+
+        if self.deleted_at is None:
+            self.deleted_at = timezone.now()
+        if performed_by and self.deleted_by_id is None:
+            self.deleted_by = performed_by
+
+        self.save(update_fields=["is_deleted", "is_active", "deleted_at", "deleted_by"])
 
 # END src/accounts/models.py

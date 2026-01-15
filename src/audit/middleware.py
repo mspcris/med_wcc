@@ -1,3 +1,4 @@
+# src/audit/middleware.py
 import threading
 
 _thread_locals = threading.local()
@@ -11,6 +12,14 @@ def get_current_request():
     return getattr(_thread_locals, "request", None)
 
 
+def set_current_user(user):
+    _thread_locals.user = user
+
+
+def get_current_user():
+    return getattr(_thread_locals, "user", None)
+
+
 def get_client_ip(request):
     xff = request.META.get("HTTP_X_FORWARDED_FOR")
     if xff:
@@ -20,7 +29,7 @@ def get_client_ip(request):
 
 class AuditRequestMiddleware:
     """
-    Armazena o request atual em thread local.
+    Armazena o request e o usuário atual em thread local.
     Permite que signals/services consigam pegar:
     - usuário logado
     - ip
@@ -32,5 +41,12 @@ class AuditRequestMiddleware:
 
     def __call__(self, request):
         set_current_request(request)
-        response = self.get_response(request)
-        return response
+
+        user = getattr(request, "user", None)
+        if user is not None and getattr(user, "is_authenticated", False):
+            set_current_user(user)
+        else:
+            set_current_user(None)
+
+        return self.get_response(request)
+# END src/audit/middleware.py

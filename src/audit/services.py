@@ -3,6 +3,11 @@ from django.utils import timezone
 from .models import AuditLog
 from .middleware import get_current_request, get_client_ip
 
+from typing import Optional
+from django.contrib.auth import get_user_model
+from .middleware import get_current_request, get_client_ip, get_current_user
+
+
 
 def log_event(
     *,
@@ -26,8 +31,8 @@ def log_event(
         req_user = getattr(request, "user", None)
 
     if performed_by is None:
-        if req_user is not None and getattr(req_user, "is_authenticated", False):
-            performed_by = req_user
+        performed_by = get_current_user()
+
 
     AuditLog.objects.create(
         action=action,
@@ -41,3 +46,11 @@ def log_event(
         ip_address=ip_address,
         user_agent=user_agent,
     )
+
+_user_local = {"user": None}
+
+def set_current_user(user):
+    _user_local["user"] = user
+
+def get_current_user() -> Optional[object]:
+    return _user_local.get("user")
