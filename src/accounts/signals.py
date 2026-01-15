@@ -1,14 +1,14 @@
 # src/accounts/signals.py
 
 from django.db import transaction
-from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 from django.utils import timezone
 
 from audit.services import log_event
 from .models import User
-from django.db.models.signals import pre_delete
+from django.db.models.signals import pre_save, post_save, pre_delete
 
+from django.apps import apps as django_apps
 
 def _entity(user: User) -> str:
     return f"{user._meta.app_label}.{user.__class__.__name__}"
@@ -212,5 +212,32 @@ def user_pre_delete(sender, instance: User, **kwargs):
     raise RuntimeError(
         "Delete físico de User é proibido. Use desativação (is_active=False) ou soft_delete()."
     )
+
+
+# =========================================================
+# Delete físico proibido para qualquer Model do app accounts
+# (cobre modelos futuros sem precisar lembrar)
+# =========================================================
+
+def _prevent_physical_delete_accounts(sender, instance, **kwargs):
+    raise RuntimeError(
+        f"Delete físico de {sender.__name__} é proibido. Use desativação (is_active=False) ou soft_delete()."
+    )
+
+
+def register_accounts_delete_guards():
+    app_config = django_apps.get_app_config("accounts")
+
+    for model in app_config.get_models():
+        if model.__name__ == "User":
+            continue  # User já está protegido
+        pre_delete.connect(
+            _prevent_physical_delete_accounts,
+            sender=model,
+            dispatch_uid=f"accounts.no_physical_delete.{model.__name__}",
+        )
+
+
+register_accounts_delete_guards()
 
 # END src/accounts/signals.py

@@ -77,4 +77,31 @@ def patient_post_save(sender, instance: Patient, created: bool, **kwargs):
 def patient_pre_delete(sender, instance: Patient, **kwargs):
     raise RuntimeError("Delete físico de Patient é proibido. Use inativação (is_active=False).")
 
+
+
+# =========================================================
+# Delete físico proibido para qualquer Model do app core
+# (cobre modelos futuros sem precisar lembrar)
+# =========================================================
+from django.apps import apps as django_apps
+
+def _prevent_physical_delete_core(sender, instance, **kwargs):
+    raise RuntimeError(
+        f"Delete físico de {sender.__name__} é proibido. Use inativação (is_active=False) ou soft_delete()."
+    )
+
+def register_core_delete_guards():
+    app_config = django_apps.get_app_config("core")
+
+    for model in app_config.get_models():
+        if model.__name__ == "Patient":
+            continue  # Patient já tem handler específico
+        pre_delete.connect(
+            _prevent_physical_delete_core,
+            sender=model,
+            dispatch_uid=f"core.no_physical_delete.{model.__name__}",
+        )
+
+register_core_delete_guards()
+    
 # END src/core/signals.py

@@ -46,9 +46,9 @@ INSTALLED_APPS = [
     
     'core.apps.CoreConfig',
     'accounts.apps.AccountsConfig',
-    'scheduling',
-    'care',
-    'billing',
+    'scheduling.apps.SchedulingConfig',
+    'care.apps.CareConfig',
+    'billing.apps.BillingConfig',
     'audit.apps.AuditConfig',
 
 
