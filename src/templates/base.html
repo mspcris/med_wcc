@@ -1,0 +1,31 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}med_wcc{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  </head>
+
+  <body>
+    <header class="topbar">
+      <div class="container topbar__inner">
+        <div class="brand">med_wcc</div>
+
+        <nav class="nav">
+          {% if user.is_authenticated %}
+            <span class="nav__user">{{ user.username }}</span>
+            <a class="nav__link" href="{% url 'logout' %}">Sair</a>
+          {% else %}
+            <a class="nav__link" href="{% url 'login' %}">Entrar</a>
+          {% endif %}
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      {% block content %}{% endblock %}
+    </main>
+  </body>
+</html>

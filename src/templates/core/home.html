@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Home | med_wcc{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <h1>Home</h1>
+    <p>Controle de acesso por flags (por usuário).</p>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Recurso</th>
+          <th>Acesso</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for name, enabled in flags %}
+          <tr>
+            <td>{{ name }}</td>
+            <td>
+              {% if enabled %}
+                <span class="pill pill--ok">LIBERADO</span>
+              {% else %}
+                <span class="pill pill--no">BLOQUEADO</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="actions">
+      <a class="btn btn--secondary" href="/admin/">Abrir Admin</a>
+    </div>
+  </div>
+{% endblock %}
