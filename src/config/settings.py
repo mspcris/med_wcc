@@ -49,12 +49,14 @@ INSTALLED_APPS = [
     'scheduling',
     'care',
     'billing',
-    'audit',
+    'audit.apps.AuditConfig',
+
 
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'audit.middleware.AuditRequestMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
