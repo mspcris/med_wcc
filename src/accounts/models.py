@@ -1,9 +1,21 @@
 # src/accounts/models.py
 
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, UserManager as DjangoUserManager
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
+
+
+class UserQuerySet(models.QuerySet):
+    def delete(self, *args, **kwargs):
+        raise RuntimeError(
+            "Delete físico de User é proibido (QuerySet.delete). "
+            "Use desativação (is_active=False) ou soft_delete()."
+        )
+
+
+class UserManager(DjangoUserManager.from_queryset(UserQuerySet)):
+    pass
 
 
 class User(AbstractUser):
@@ -14,6 +26,8 @@ class User(AbstractUser):
     - Auditoria completa de ciclo de vida
     - Soft delete (nunca apagar fisicamente)
     """
+
+    objects = UserManager()
 
     # =========================
     # Identidade básica
@@ -92,8 +106,9 @@ class User(AbstractUser):
         }
 
     def delete(self, using=None, keep_parents=False):
-        # Bloqueia obj.delete()
-        raise RuntimeError("User não pode ser apagado. Use desativação (is_active=False) ou soft_delete().")
+        raise RuntimeError(
+            "User não pode ser apagado. Use desativação (is_active=False) ou soft_delete()."
+        )
 
     def soft_delete(self, performed_by=None):
         """
