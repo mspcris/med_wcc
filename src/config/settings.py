@@ -45,7 +45,7 @@ INSTALLED_APPS = [
 
     
     'core',
-    'accounts',
+    'accounts.apps.AccountsConfig',
     'scheduling',
     'care',
     'billing',

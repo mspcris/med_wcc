@@ -1,3 +1,5 @@
+# src/accounts/models.py
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.conf import settings
@@ -71,3 +73,24 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
+
+    def audit_snapshot(self) -> dict:
+        """
+        Estado mínimo auditável do usuário.
+        Mantém simples e focado (sem expor senha).
+        """
+        return {
+            "email": self.email,
+            "is_active": self.is_active,
+            "can_access_dashboard": self.can_access_dashboard,
+            "can_manage_patients": self.can_manage_patients,
+            "can_manage_schedule": self.can_manage_schedule,
+            "can_access_care": self.can_access_care,
+            "can_access_billing": self.can_access_billing,
+            "can_manage_users": self.can_manage_users,
+        }
+
+    def delete(self, using=None, keep_parents=False):
+        raise RuntimeError("User não pode ser apagado. Use is_active=False (desativar).")
+
+# END src/accounts/models.py

@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+
 from .models import User
 
 
@@ -7,9 +8,16 @@ from .models import User
 class UserAdmin(BaseUserAdmin):
     """
     Admin do usuário customizado.
+    Regra: usuário NÃO pode ser apagado fisicamente (somente desativado).
     """
 
     model = User
+
+    actions = None  # remove ações em massa (inclui delete_selected)
+
+    def has_delete_permission(self, request, obj=None):
+        # Ninguém apaga usuário fisicamente pelo admin
+        return False
 
     list_display = (
         "username",

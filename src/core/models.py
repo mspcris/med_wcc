@@ -1,20 +1,11 @@
 from django.conf import settings
 from django.db import models
 
-
 class Patient(models.Model):
-    """
-    Paciente do sistema.
-
-    - Vinculado a um usuário (login)
-    - Contém apenas dados clínicos/administrativos
-    - Totalmente auditável
-    """
-
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
-        related_name="patient_profile",
+        related_name="patient",
     )
 
     # Dados básicos

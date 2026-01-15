@@ -44,3 +44,4 @@ class AuditLog(models.Model):
 
     def __str__(self):
         return f"{self.performed_at} {self.action} {self.entity}:{self.entity_id}"
+

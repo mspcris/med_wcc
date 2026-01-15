@@ -38,3 +38,4 @@ def audit_login_failed(sender, credentials, request, **kwargs):
         message=f"Tentativa de login falhou: {username}",
         performed_by=None,
     )
+
