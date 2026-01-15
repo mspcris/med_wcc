@@ -1,7 +1,16 @@
+# src/accounts/admin.py
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.utils.translation import gettext_lazy as _
 
+from core.models import Staff
 from .models import User
+
+
+class StaffInline(admin.StackedInline):
+    model = Staff
+    extra = 0
+    can_delete = False
 
 
 @admin.register(User)
@@ -12,6 +21,7 @@ class UserAdmin(BaseUserAdmin):
     """
 
     model = User
+    inlines = (StaffInline,)
 
     actions = None  # remove ações em massa (inclui delete_selected)
 
@@ -35,9 +45,9 @@ class UserAdmin(BaseUserAdmin):
 
     fieldsets = (
         (None, {"fields": ("username", "password")}),
-        ("Informações pessoais", {"fields": ("email",)}),
+        (_("Informações pessoais"), {"fields": ("email",)}),
         (
-            "Permissões do sistema",
+            _("Permissões do sistema (flags)"),
             {
                 "fields": (
                     "is_active",
@@ -52,7 +62,7 @@ class UserAdmin(BaseUserAdmin):
                 )
             },
         ),
-        ("Datas importantes", {"fields": ("last_login", "date_joined")}),
+        (_("Datas importantes"), {"fields": ("last_login", "date_joined")}),
     )
 
     add_fieldsets = (
@@ -75,3 +85,4 @@ class UserAdmin(BaseUserAdmin):
 
     search_fields = ("username", "email")
     ordering = ("username",)
+# END src/accounts/admin.py

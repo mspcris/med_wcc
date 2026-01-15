@@ -31,3 +31,9 @@ input { padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; width: 100
 .pill--no { background: #fee2e2; color: #991b1b; }
 
 .actions { margin-top: 14px; }
+
+.layout { display: grid; grid-template-columns: 280px 1fr; gap: 16px; }
+.sidebar h2 { margin: 0 0 10px; font-size: 16px; }
+.menu { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.menu__link { display: block; padding: 10px; border-radius: 8px; text-decoration: none; background: #f1f5f9; color: #0f172a; }
+.menu__link:hover { background: #e2e8f0; }

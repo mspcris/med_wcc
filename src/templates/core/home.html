@@ -2,35 +2,26 @@
 {% block title %}Home | med_wcc{% endblock %}
 
 {% block content %}
-  <div class="card">
-    <h1>Home</h1>
-    <p>Controle de acesso por flags (por usuário).</p>
+  <div class="layout">
+    <aside class="sidebar card">
+      <h2>Menu</h2>
 
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Recurso</th>
-          <th>Acesso</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for name, enabled in flags %}
-          <tr>
-            <td>{{ name }}</td>
-            <td>
-              {% if enabled %}
-                <span class="pill pill--ok">LIBERADO</span>
-              {% else %}
-                <span class="pill pill--no">BLOQUEADO</span>
-              {% endif %}
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+      {% if menu %}
+        <ul class="menu">
+          {% for item in menu %}
+            <li class="menu__item">
+              <a class="menu__link" href="{{ item.url }}">{{ item.label }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>Nenhum módulo liberado para este usuário.</p>
+      {% endif %}
+    </aside>
 
-    <div class="actions">
-      <a class="btn btn--secondary" href="/admin/">Abrir Admin</a>
-    </div>
+    <section class="content card">
+      <h1>Home</h1>
+      <p>Menu exibido apenas com módulos liberados pelas flags do usuário.</p>
+    </section>
   </div>
 {% endblock %}

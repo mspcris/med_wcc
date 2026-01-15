@@ -1,0 +1,24 @@
+{
+  "name": "med_wcc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mspcris/med_wcc.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/mspcris/med_wcc/issues"
+  },
+  "homepage": "https://github.com/mspcris/med_wcc#readme",
+  "dependencies": {
+    "admin-lte": "^4.0.0-rc6"
+  }
+}
